@@ -21,28 +21,25 @@ function installPM2() {
 
 // transfers local project to the remote server
 function transferProjectToRemote(failed, successful) {
-    return ssh.putDirectory(
-        '../hackathon-starter',
-        '/home/ubuntu/hackathon-starter-temp',
-        {
-            recursive: true,
-            concurrency: 1,
-            validate: function (itemPath) {
-                const baseName = path.basename(itemPath);
-                return (
-                    baseName.substr(0, 1) !== '.' && baseName !== 'node_modules' // do not allow dot files
-                ); // do not allow node_modules
-            },
-            tick: function (localPath, remotePath, error) {
-                if (error) {
-                    failed.push(localPath);
-                    console.log('failed.push: ' + localPath);
-                } else {
-                    successful.push(localPath);
-                    console.log('successful.push: ' + localPath);
-                }
+    return ssh.putDirectory('../hackathon-starter', '/home/ubuntu/hackathon-starter-temp', {
+        recursive: true,
+        concurrency: 1,
+        validate: function (itemPath) {
+            const baseName = path.basename(itemPath);
+            return (
+                baseName.substr(0, 1) !== '.' && baseName !== 'node_modules' // do not allow dot files
+            ); // do not allow node_modules
+        },
+        tick: function (localPath, remotePath, error) {
+            if (error) {
+                failed.push(localPath);
+                console.log('failed.push: ' + localPath);
+            } else {
+                successful.push(localPath);
+                console.log('successful.push: ' + localPath);
             }
         }
+    }
     );
 }
 
